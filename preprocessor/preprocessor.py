@@ -44,7 +44,8 @@ def main(args):
 
         vertices_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=True)[0:1]
         landmark_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=False)[0:1]
-
+        if not vertices_lst:
+            continue
         vertices_lst[0] = vertices_lst[0][:, face_verts_idx]
         face_mask = render(img, vertices_lst, face_tri, alpha=1, with_bg_flag=False)
         face_mask[np.where(face_mask>0)] = 1

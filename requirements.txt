@@ -1,6 +1,6 @@
 tqdm
 numpy
-opencv-python
+py-opencv
 scipy
 visdom
 torch
