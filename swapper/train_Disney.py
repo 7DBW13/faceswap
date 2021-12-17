@@ -46,7 +46,7 @@ def main(args):
     criterion_MSE = MaskLoss(device=device).to(device)
     # ----------------------------------------------------------------------
 
-    for level in range(int(np.log2(512))-1, int(np.log2(target_res))-1):
+    for level in range(common_level+1, int(np.log2(target_res))-1):
         cur_res = 2**(level+2)
         print('==========Current Resolution: {}x{}=========='.format(cur_res, cur_res))
 
