@@ -8,7 +8,7 @@ $DFD_PYTHON "preprocessor.py" \
     -f "../$DFD_WORKSPACE/data_source/face_img"\
     -c "../$DFD_WORKSPACE/data_source/crop_img"\
     -t "../$DFD_WORKSPACE/data_source/trans_matrix"\
-    -r "128"
+    -r "256"
 
 $DFD_PYTHON "preprocessor.py" \
     -i "../$DFD_WORKSPACE/data_target/origin"\
@@ -16,4 +16,4 @@ $DFD_PYTHON "preprocessor.py" \
     -f "../$DFD_WORKSPACE/data_target/face_img"\
     -c "../$DFD_WORKSPACE/data_target/crop_img"\
     -t "../$DFD_WORKSPACE/data_target/trans_matrix"\
-    -r "128"
+    -r "256"

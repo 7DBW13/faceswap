@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 import numpy as np
-# import cv2
+import cv2
 from pathlib import Path
 import os
 import argparse
@@ -46,7 +46,7 @@ def main(args):
     criterion_MSE = MaskLoss(device=device).to(device)
     # ----------------------------------------------------------------------
 
-    for level in range(common_level+1, int(np.log2(target_res))-1):
+    for level in range(common_level+3, int(np.log2(target_res))-1):
         cur_res = 2**(level+2)
         print('==========Current Resolution: {}x{}=========='.format(cur_res, cur_res))
 
@@ -94,7 +94,7 @@ def main(args):
         for i in range(num_person):
             all_param += list(face_decoders[i].parameters())
         AE_optimizer = torch.optim.Adam(params=all_param,
-                                        lr=learning_rate[level], betas=(0.5, 0.999))
+                                        lr=learning_rate[level])
 
         Logger = LogModel(cur_res, person_num=num_person,
                           saving_path=args.model_folder)
@@ -137,12 +137,16 @@ def main(args):
 
                     # ======================Visualization===========================
                     if (k % 20 == 0) & (i == 0):
-                        visualize_output("0_out", img_out.cpu())
+                        # visualize_output("0_out", img_out.cpu())
+                        # pass
+                        visdom_visualize.images([np.transpose(cv2.cvtColor(np.transpose(img_out.cpu().detach().numpy()[i], (2, 1, 0)), cv2.COLOR_BGR2RGB), (2, 0, 1)) for i in range(4)], win="source_output_{}".format(cur_res), opts={'caption': "source_output_{}".format(cur_res)})
                     if (k % 20 == 0) & (i == 1):
-                        visualize_output("1_out", img_out.cpu())
+                        # visualize_output("1_out", img_out.cpu())
+                        visdom_visualize.images([np.transpose(cv2.cvtColor(np.transpose(img_out.cpu().detach().numpy()[i], (2, 1, 0)), cv2.COLOR_BGR2RGB), (2, 0, 1)) for i in range(4)], win="target_output_{}".format(cur_res), opts={'caption': "target_output_{}".format(cur_res)})
                         swap_0 = face_decoders[0](face_encoder(
                             imgs[1]['rgb_label'].to(device)*imgs[1]['mask_label'].to(device), cur_alpha), cur_alpha)
-                        visualize_output("swap0_out", swap_0.cpu())
+                        # visualize_output("swap0_out", swap_0.cpu())
+                        visdom_visualize.images([np.transpose(cv2.cvtColor(np.transpose(swap_0.cpu().detach().numpy()[i], (2, 1, 0)), cv2.COLOR_BGR2RGB), (2, 0, 1)) for i in range(4)], win="swap_output_{}".format(cur_res), opts={'caption': "swap_output_{}".format(cur_res)})
                     # ==============================================================
 
                 AE_optimizer.zero_grad()
@@ -153,7 +157,7 @@ def main(args):
                 loss_count += total_loss.item()
 
             visdom_visualize.line(X=[count], Y=[loss_count/(count-last_count)], win="loss_{}".format(
-                cur_res), update="append", opts={'title': "loss_{}_".format(cur_res)})
+                cur_res), update="append", opts={'title': "loss_{}".format(cur_res)})
 
             print('Loss is {}'.format(loss_count/(count-last_count)))
             loss_count = 0
