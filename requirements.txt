@@ -1,0 +1,10 @@
+tqdm
+numpy
+py-opencv
+scipy
+visdom
+torch
+torchvision
+pyyaml
+matplotlib
+pyamg
